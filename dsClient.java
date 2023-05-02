@@ -94,8 +94,17 @@ public class dsClient {
 				
 				//receive .
 				str = receive();
+				
+				dsServer scheduleServer = servers_list.get(0);
+				
+				for (int i = 0; i < servers_list.size(); i++){
+					if (servers_list.get(i).cores >= scheduleJob.cores && servers_list.get(i).memory >= scheduleJob.memory && servers_list.get(i).disk >= scheduleJob.disk){
+						scheduleServer = servers_list.get(i);
+						break;
+					}
+				}
 					
-				String schedule = "SCHD" + " " + scheduleJob.id + " " + servers_list.get(0).type + " " + servers_list.get(0).id;
+				String schedule = "SCHD" + " " + scheduleJob.id + " " + scheduleServer.type + " " + scheduleServer.id;
 				
 				//send schedule job
 				write(schedule);
