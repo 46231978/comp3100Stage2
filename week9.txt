@@ -1,0 +1,40 @@
+Firt-fit
+- Find the first server that is capible for the job.
+- Advantage:
+	- The search for the server performed quickly
+	- Simple and efficiency
+	- Helps to minimise memory fragmentation
+- Disavantage:
+	- Poor performance in siatuation where the memory is highly fragmented, as the search for a suitable block of a memory can 		become time-consuming
+	- Poor memory ultilisation as it may allocate to the server that has larger memory than are actually needed by a job.
+	
+Best-fit
+- Find the first appear server that has the smallest core but capible for the job.
+- Advantages:
+	- Higher memory ultilisation in the situation that the small job can use the left-over memory of the server, hence can run multiple job at a time. -> Memory efficient
+	- Save memory from getting waste
+	- Reduce memory fragmentation
+	- Cost-saving method
+- Disavatages:
+	- Slow as it needs to search for the entire servers.
+	- Results in slow turnover compares to first-fit
+	- Small internal fragmentation
+	
+Worst-fit
+- Find the first appeared server that has the largest cores and assign the job
+- Advantage: 
+	- Large internal fragmentation
+	- Small jobs can be placed in the leftover partition
+	- Save memory from getting waste
+- Disadvantage:
+	- Slow as it needs to search for the entire servers
+	- High cost as it likely only ultilising the large servers (expensive servers)
+
+First-fit Queue
+
+
+Best-fit Queue
+
+Worst-fit Queue
+
+

@@ -96,56 +96,58 @@ public class dsClient {
 				str = receive();
 				
 				ArrayList<dsServer> capibleList = new ArrayList<>();
+				
 				dsServer scheduleServer = null;
-				boolean found = false;
 				
 				for (int i = 0; i < servers_list.size(); i++){
 					if (servers_list.get(i).cores >= scheduleJob.cores && servers_list.get(i).memory >= scheduleJob.memory && servers_list.get(i).disk >= scheduleJob.disk){
-						if (found == false){
+						if(scheduleServer == null){
 							scheduleServer = servers_list.get(i);
-							found = true;
-						} else {
-							if (servers_list.get(i).cores < scheduleServer.cores){
-								scheduleServer = servers_list.get(i);
-							} /*else if (servers_list.get(i).cores == scheduleServer.cores){
-								if (servers_list.get(i).memory < scheduleServer.memory){
-									scheduleServer = servers_list.get(i);
-								}
-							}*/
 						}
-					} 
-				}
-				
-				if (scheduleServer == null){
-					scheduleServer = servers_list.get(0);
-					for (int i = 0; i > servers_list.size(); i++){
-						if (servers_list.get(i).memory > scheduleServer.memory){
-							scheduleServer = servers_list.get(i);
+					     	if (scheduleServer != null){
+							if (servers_list.get(i).cores < scheduleServer.cores /*&& servers_list.get(i).memory < scheduleServer.memory*/){
+								scheduleServer = servers_list.get(i);
+							}
 						}
 					}
 				}
 				
+				if (scheduleServer == null){
+					for (int i= 0; i < servers_list.size(); i++){
+						if (servers_list.get(i).status.equals("active")){
+							scheduleServer = servers_list.get(i);
+							break;
+						} 
+					}
+				}
 				
+				if (scheduleServer == null){
+					for (int i= 0; i < servers_list.size(); i++){
+						if (servers_list.get(i).status.equals("booting")){
+							scheduleServer = servers_list.get(i);
+							break;
+						} 
+					}
+				}
 				
-				/*if (!capibleList.isEmpty()){
-					scheduleServer = capibleList.get(0);
-					for (int i = 0; i < capibleList.size(); i++){
-						if (capibleList.get(i).cores < scheduleServer.cores){
-							scheduleServer = capibleList.get(i);
-						}
-						if (capibleList.get(i).cores == scheduleServer.cores){
-							if(capibleList.get(i).memory < scheduleServer.memory){
-								scheduleServer = capibleList.get(i);
+				/*if (scheduleServer == null){
+					for (int i = 0; i < servers_list.size(); i++){
+						if (servers_list.get(i).status.equals("active") || servers_list.get(i).status.equals("booting")){
+							if(scheduleServer == null){
+								scheduleServer = servers_list.get(i);
 							}
-							if (capibleList.get(i).memory == scheduleServer.memory){
-								if (capibleList.get(i).disk < scheduleServer.disk){
-									scheduleServer = capibleList.get(i);
+							if (scheduleServer != null){
+								if (servers_list.get(i).cores > scheduleServer.cores){
+									scheduleServer = servers_list.get(i);
 								}
 							}
 						}
 					}
 				}*/
 				
+				/*if (scheduleServer == null){
+					scheduleServer = servers_list.get(0);
+				}*/
 				
 				String schedule = "SCHD" + " " + scheduleJob.id + " " + scheduleServer.type + " " + scheduleServer.id;
 				
