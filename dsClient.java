@@ -34,7 +34,7 @@ public class dsClient {
 	}
 	
 	
-	public static void main (String[] args) throws IOException{
+	public static void main (String[] args) throws IOException, InterruptedException {
 		Socket s = new Socket("localhost", 50000);
 		din = new DataInputStream(s.getInputStream());
 		dout = new DataOutputStream(s.getOutputStream());
@@ -95,59 +95,41 @@ public class dsClient {
 				//receive .
 				str = receive();
 				
-				ArrayList<dsServer> capibleList = new ArrayList<>();
-				
 				dsServer scheduleServer = null;
 				
-				for (int i = 0; i < servers_list.size(); i++){
-					if (servers_list.get(i).cores >= scheduleJob.cores && servers_list.get(i).memory >= scheduleJob.memory && servers_list.get(i).disk >= scheduleJob.disk){
-						if(scheduleServer == null){
-							scheduleServer = servers_list.get(i);
-						}
-					     	if (scheduleServer != null){
-							if (servers_list.get(i).cores < scheduleServer.cores /*&& servers_list.get(i).memory < scheduleServer.memory*/){
-								scheduleServer = servers_list.get(i);
-							}
-						}
-					}
+				int midPoint = 0;
+				if (servers_list.size()%2 == 0){
+					midPoint = servers_list.size()/2;
+				} else {
+					midPoint = servers_list.size()/2 + 1;
 				}
 				
-				if (scheduleServer == null){
-					for (int i= 0; i < servers_list.size(); i++){
-						if (servers_list.get(i).status.equals("active")){
-							scheduleServer = servers_list.get(i);
-							break;
-						} 
-					}
+				iterator list1 = new iterator(servers_list, scheduleJob, 0, midPoint);
+				iterator list2 = new iterator(servers_list, scheduleJob, midPoint, servers_list.size());
+				
+				list1.start();
+				list2.start();
+				
+				try{
+					list1.join();
+					list2.join();
+				} catch (InterruptedException e){
+				
 				}
 				
-				if (scheduleServer == null){
-					for (int i= 0; i < servers_list.size(); i++){
-						if (servers_list.get(i).status.equals("booting")){
-							scheduleServer = servers_list.get(i);
-							break;
-						} 
+				if(list1.server != null && list2.server != null){
+					if (list1.server.cores <= list2.server.cores){
+						scheduleServer = list1.server;
+					} else {
+						scheduleServer = list2.server;
 					}
-				}
-				
-				/*if (scheduleServer == null){
-					for (int i = 0; i < servers_list.size(); i++){
-						if (servers_list.get(i).status.equals("active") || servers_list.get(i).status.equals("booting")){
-							if(scheduleServer == null){
-								scheduleServer = servers_list.get(i);
-							}
-							if (scheduleServer != null){
-								if (servers_list.get(i).cores > scheduleServer.cores){
-									scheduleServer = servers_list.get(i);
-								}
-							}
-						}
-					}
-				}*/
-				
-				/*if (scheduleServer == null){
+				} else if (list1.server != null){
+					scheduleServer = list1.server;
+				} else if (list2.server != null){
+					scheduleServer = list2.server;
+				} else {
 					scheduleServer = servers_list.get(0);
-				}*/
+				}
 				
 				String schedule = "SCHD" + " " + scheduleJob.id + " " + scheduleServer.type + " " + scheduleServer.id;
 				
