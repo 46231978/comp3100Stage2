@@ -17,7 +17,7 @@ public class iterator extends Thread {
 	@Override 
 	public void run(){
 		for (int i = startIndex; i < endIndex; i++){
-			if (servers_list.get(i).cores >= scheduleJob.cores && servers_list.get(i).memory >= scheduleJob.memory){
+			if (servers_list.get(i).cores >= scheduleJob.cores && servers_list.get(i).memory >= scheduleJob.memory && servers_list.get(i).disk >= scheduleJob.disk){
 				if(server == null || servers_list.get(i).cores < server.cores){
 					server = servers_list.get(i);
 				}
