@@ -6,6 +6,7 @@ public class iterator extends Thread {
 	private int startIndex;
 	private int endIndex;
 	public dsServer server = null;
+	public int fit;
 	
 	public iterator (ArrayList<dsServer> list, dsJob job, int start, int end){
 		servers_list = list;
@@ -16,13 +17,33 @@ public class iterator extends Thread {
 	
 	@Override 
 	public void run(){
+		//int fit = 0;
+		boolean active = false;
 		for (int i = startIndex; i < endIndex; i++){
-			if (servers_list.get(i).cores >= scheduleJob.cores && servers_list.get(i).memory >= scheduleJob.memory && servers_list.get(i).disk >= scheduleJob.disk){
-				if(server == null || servers_list.get(i).cores < server.cores){
+			if (servers_list.get(i).cores >= scheduleJob.cores && servers_list.get(i).memory >= scheduleJob.memory && servers_list.get(i).disk >= scheduleJob.disk) {
+				if(server == null){
+					fit = servers_list.get(i).cores + servers_list.get(i).memory + servers_list.get(i).disk + servers_list.get(i).avaiNow;
 					server = servers_list.get(i);
+				} else {
+					if (servers_list.get(i).status.equals("active") || servers_list.get(i).status.equals("booting")){
+						//if (active == false){
+						//	server = servers_list.get(i);
+						//	fit = servers_list.get(i).cores + servers_list.get(i).memory + servers_list.get(i).disk + servers_list.get(i).avaiNow;
+						//	active = true;
+						//} else{
+						
+						int temp = servers_list.get(i).cores + servers_list.get(i).memory + servers_list.get(i).disk + servers_list.get(i).avaiNow;
+						if (temp < fit){
+							fit = temp;
+							server = servers_list.get(i);
+						//}
+						}
+						
+				}
 				}
 			}
 		}
 	}
-}
+	}
+
 		
