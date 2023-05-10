@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class stage2_idea3 {
+public class stage2_idea5 {
    	public static String username = System.getProperty("user.name");
     	
     	public static ArrayList<dsServer> servers_list = new ArrayList<>();
@@ -102,7 +102,7 @@ public class stage2_idea3 {
 						if (scheduleServer == null){
 							scheduleServer = servers_list.get(i);
 						} else {
-							if (servers_list.get(i).cores <= scheduleServer.cores && servers_list.get(i).memory <= scheduleServer.memory && servers_list.get(i).disk <= scheduleServer.disk /*&& servers_list.get(i).waitJobs <= scheduleServer.waitJobs*/){
+							if (servers_list.get(i).cores <= scheduleServer.cores && servers_list.get(i).memory <= scheduleServer.memory && servers_list.get(i).disk <= scheduleServer.disk && servers_list.get(i).waitJobs <= scheduleServer.waitJobs){
 							scheduleServer = servers_list.get(i);
 							}
 						}
