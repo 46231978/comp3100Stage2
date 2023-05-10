@@ -34,7 +34,7 @@ public class dsClient {
 	}
 	
 	
-	public static void main (String[] args) throws IOException, InterruptedException {
+	public static void main (String[] args) throws IOException{
 		Socket s = new Socket("localhost", 50000);
 		din = new DataInputStream(s.getInputStream());
 		dout = new DataOutputStream(s.getOutputStream());
@@ -97,49 +97,33 @@ public class dsClient {
 				
 				dsServer scheduleServer = null;
 				
-				int midPoint = servers_list.size()/2;
-				if (servers_list.size()%2 == 1){
-					midPoint += 1;
-				}
-	
-				iterator list1 = new iterator(servers_list, scheduleJob, 0, midPoint);
-				iterator list2 = new iterator(servers_list, scheduleJob, midPoint, servers_list.size());
-				
-				list1.start();
-				list2.start();
-				
-				list1.join();
-				list2.join();
-	
-				if(list1.server != null && list2.server != null){
-					if (list1.server.avaiNow <= list2.server.avaiNow){
-						scheduleServer = list1.server;
-					} else {
-						scheduleServer = list2.server;
-					}
-				} else if (list1.server != null && list2.server == null){
-					scheduleServer = list1.server;
-				} else if (list2.server != null && list1.server == null){
-					scheduleServer = list2.server;
-				//} else {
-				//if (list1.server != null){
-				//	scheduleServer = list1.server;
-				} else {
-					for (int i = 0; i < servers_list.size(); i++){
-						if (servers_list.get(i).status.equals("active") || servers_list.get(i).status.equals("booting")){
-							//if (scheduleServer == null){
-								scheduleServer = servers_list.get(i);
-								break;
-							//} else {
-							//	if (servers_list.get(i).avaiNow < scheduleServer.avaiNow){
-							//		scheduleServer = servers_list.get(i);
-							//	}
-							} 
+				for (int i = 0; i < servers_list.size(); i++){
+					if (servers_list.get(i).cores >= scheduleJob.cores && servers_list.get(i).memory >= scheduleJob.memory && servers_list.get(i).disk >= scheduleJob.disk){
+						if (scheduleServer == null){
+							scheduleServer = servers_list.get(i);
+						} else {
+							if (servers_list.get(i).cores <= scheduleServer.cores && servers_list.get(i).memory <= scheduleServer.memory && servers_list.get(i).disk <= scheduleServer.disk /*&& servers_list.get(i).waitJobs <= scheduleServer.waitJobs*/){
+							scheduleServer = servers_list.get(i);
+							}
 						}
 					}
+				}
 				
 				
-				
+				if (scheduleServer == null){
+					for (int i= 0; i < servers_list.size(); i++){
+						if (servers_list.get(i).status.equals("active") || servers_list.get(i).status.equals("booting")){
+							if (scheduleServer == null){
+								scheduleServer = servers_list.get(i);
+							} else {
+							if (servers_list.get(i).waitJobs < scheduleServer.waitJobs){
+								scheduleServer = servers_list.get(i);
+							}
+							}
+						}
+					}
+				}
+					
 				String schedule = "SCHD" + " " + scheduleJob.id + " " + scheduleServer.type + " " + scheduleServer.id;
 				
 				//send schedule job
