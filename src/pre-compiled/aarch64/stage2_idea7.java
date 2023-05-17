@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class dsClient {
+public class stage2_idea7 {
    	public static String username = System.getProperty("user.name");
     	
     	public static ArrayList<dsServer> servers_list = new ArrayList<>();
@@ -97,29 +97,42 @@ public class dsClient {
 				
 				dsServer scheduleServer = null;
 				
+				double maxFitRate = Integer.MAX_VALUE;
 				for (int i = 0; i < servers_list.size(); i++){
 					if (servers_list.get(i).cores >= scheduleJob.cores && servers_list.get(i).memory >= scheduleJob.memory && servers_list.get(i).disk >= scheduleJob.disk){
-						if (scheduleServer == null){
-							scheduleServer = servers_list.get(i);
+						dsServer temp = servers_list.get(i);
+						if (temp.status.equals("idle")){
+							scheduleServer = temp;
+							break;
 						} else {
-							if (servers_list.get(i).cores < scheduleServer.cores && servers_list.get(i).memory < scheduleServer.memory && servers_list.get(i).disk < scheduleServer.disk && !servers_list.get(i).status.equals("inactive")){
-							scheduleServer = servers_list.get(i);
-							}
+						//double coreRate = (temp.cores - scheduleJob.cores)/scheduleJob.cores;
+						//double memoryRate = (temp.memory - scheduleJob.memory)/scheduleJob.memory;
+						//double diskRate = (temp.disk - scheduleJob.disk)/scheduleJob.disk;
+						double responseRate = temp.waitJobs + temp.runJobs;
+						//double fitRate = coreRate + memoryRate + diskRate + responseRate;
+						double fitRate = responseRate;
+						if (fitRate < maxFitRate){
+							maxFitRate = fitRate;
+							scheduleServer = temp;
+						}
 						}
 					}
 				}
 				
-				
 				if (scheduleServer == null){
 					for (int i= 0; i < servers_list.size(); i++){
-						if (servers_list.get(i).status.equals("active") || servers_list.get(i).status.equals("booting")){
-							if (scheduleServer == null){
-								scheduleServer = servers_list.get(i);
-							} else {
-							if (servers_list.get(i).waitJobs < scheduleServer.waitJobs){
-								scheduleServer = servers_list.get(i);
-							}
-							}
+						dsServer temp = servers_list.get(i);
+						//double coreRate = (temp.cores - scheduleJob.cores)/scheduleJob.cores;
+						//double memoryRate = (temp.memory - scheduleJob.memory)/scheduleJob.memory;
+						//double diskRate = (temp.disk - scheduleJob.disk)/scheduleJob.disk;
+						//double responseRate = (temp.avaiTime - scheduleJob.estRunTime)/scheduleJob.estRunTime;
+						//double fitRate = coreRate + memoryRate + diskRate + responseRate;
+						double responseRate = temp.waitJobs + temp.runJobs;
+						//double fitRate = coreRate + memoryRate + diskRate + responseRate;
+						double fitRate = responseRate;
+						if (fitRate < maxFitRate){
+							maxFitRate = fitRate;
+							scheduleServer = temp;
 						}
 					}
 				}
