@@ -41,7 +41,7 @@ public class stage2_idea8 {
 				if (server == null){
 					server = list.get(i);
 				} else {
-					if (list.get(i).cores < server.cores && list.get(i).memory < server.memory && list.get(i).disk < server.disk){
+					if (list.get(i).cores <= server.cores && list.get(i).memory <= server.memory && list.get(i).disk <= server.disk){
 						server = list.get(i);
 					}
 				}
