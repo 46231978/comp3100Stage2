@@ -102,7 +102,7 @@ public class dsClient {
 						if (scheduleServer == null){
 							scheduleServer = servers_list.get(i);
 						} else {
-							if (servers_list.get(i).cores < scheduleServer.cores && servers_list.get(i).memory < scheduleServer.memory && servers_list.get(i).disk < scheduleServer.disk && !servers_list.get(i).status.equals("inactive")){
+							if (servers_list.get(i).cores <= scheduleServer.cores && servers_list.get(i).memory <= scheduleServer.memory && servers_list.get(i).disk <= scheduleServer.disk && !servers_list.get(i).status.equals("inactive")){
 							scheduleServer = servers_list.get(i);
 							}
 						}
