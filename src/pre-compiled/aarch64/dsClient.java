@@ -116,7 +116,7 @@ public class dsClient {
 							if (scheduleServer == null){
 								scheduleServer = servers_list.get(i);
 							} else {
-							if (servers_list.get(i).waitJobs < scheduleServer.waitJobs){
+							if ((servers_list.get(i).waitJobs + servers_list.get(i).runJobs) < (scheduleServer.waitJobs + scheduleServer.runJobs)){
 								scheduleServer = servers_list.get(i);
 							}
 							}

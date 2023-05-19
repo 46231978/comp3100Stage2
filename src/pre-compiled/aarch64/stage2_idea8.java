@@ -134,12 +134,12 @@ public class stage2_idea8 {
 				}
 					
 				if (scheduleServer == null){
-					double maxFitRate = Integer.MAX_VALUE;
+					double minJobs = Integer.MAX_VALUE;
 					for (int i= 0; i < active_list.size(); i++){
 						dsServer temp = active_list.get(i);
-						double fitRate = temp.waitJobs + temp.runJobs;
-						if (fitRate < maxFitRate){
-							maxFitRate = fitRate;
+						double numJobs = temp.waitJobs + temp.runJobs;
+						if (numJobs < minJobs){
+							minJobs = numJobs;
 							scheduleServer = temp;
 						}
 					}
