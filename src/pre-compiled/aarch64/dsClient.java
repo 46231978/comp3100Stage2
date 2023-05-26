@@ -5,7 +5,6 @@ import java.util.*;
 public class dsClient {
    	public static String username = System.getProperty("user.name");
     	
-    	public static ArrayList<dsServer> servers_list = new ArrayList<>();
     	public static DataInputStream din;
 	public static DataOutputStream dout;
 	public static BufferedReader br;
@@ -31,6 +30,24 @@ public class dsClient {
 		String str = din.readLine();
 		System.out.println("RCVD " + str);
 		return str;
+	}
+	
+	
+	public static dsServer iterateList (ArrayList<dsServer> list, dsJob job){
+		dsServer server = null;
+		System.out.println(list.get(0).status);
+		for (int i = 0; i < list.size(); i++){
+			if (list.get(i).cores >= job.cores && list.get(i).memory >= job.memory && list.get(i).disk >= job.disk){
+				if (server == null){
+					server = list.get(i);
+				} else {
+					if (list.get(i).cores < server.cores && list.get(i).memory < server.memory && list.get(i).disk < server.disk){
+						server = list.get(i);
+					}
+				}
+			}
+		}
+		return server;
 	}
 	
 	
@@ -77,7 +94,10 @@ public class dsClient {
 				//write ok
 				write("OK");
 				
-				ArrayList<dsServer> servers_list = new ArrayList<>();
+				ArrayList<dsServer> idle_list = new ArrayList<>();
+				ArrayList<dsServer> active_list = new ArrayList<>();
+				ArrayList<dsServer> inactive_list = new ArrayList<>();
+				
 				//receive records' information
 				System.out.print("RCVD ");
 				
@@ -85,7 +105,13 @@ public class dsClient {
 					str = din.readLine();
 					String[] sysInfo = str.split("\\s+");
 					dsServer curServer = new dsServer(sysInfo);
-					servers_list.add(curServer);
+					if (curServer.status.equals("idle")){
+						idle_list.add(curServer);
+					} else if (curServer.status.equals("active") || curServer.status.equals("booting")){
+						active_list.add(curServer);
+					} else {
+						inactive_list.add(curServer);
+					}
 					System.out.println(str);
 				}
 				
@@ -97,33 +123,30 @@ public class dsClient {
 				
 				dsServer scheduleServer = null;
 				
-				for (int i = 0; i < servers_list.size(); i++){
-					if (servers_list.get(i).cores >= scheduleJob.cores && servers_list.get(i).memory >= scheduleJob.memory && servers_list.get(i).disk >= scheduleJob.disk){
-						if (scheduleServer == null){
-							scheduleServer = servers_list.get(i);
-						} else {
-							if (servers_list.get(i).cores <= scheduleServer.cores && servers_list.get(i).memory <= scheduleServer.memory && servers_list.get(i).disk <= scheduleServer.disk && !servers_list.get(i).status.equals("inactive")){
-							scheduleServer = servers_list.get(i);
-							}
-						}
-					}
+				if (!idle_list.isEmpty()){
+					scheduleServer = iterateList(idle_list, scheduleJob);
 				}
-				
-				
-				if (scheduleServer == null){
-					for (int i= 0; i < servers_list.size(); i++){
-						if (servers_list.get(i).status.equals("active") || servers_list.get(i).status.equals("booting")){
-							if (scheduleServer == null){
-								scheduleServer = servers_list.get(i);
-							} else {
-							if ((servers_list.get(i).waitJobs + servers_list.get(i).runJobs) < (scheduleServer.waitJobs + scheduleServer.runJobs)){
-								scheduleServer = servers_list.get(i);
-							}
-							}
-						}
-					}
+				if (scheduleServer == null && !active_list.isEmpty()){
+					scheduleServer = iterateList(active_list, scheduleJob);
+				}
+				if (scheduleServer == null && !inactive_list.isEmpty()){
+					scheduleServer = inactive_list.get(0);
 				}
 					
+				if (scheduleServer == null){
+					double minJobs = Integer.MAX_VALUE;
+					for (int i= 0; i < active_list.size(); i++){
+						dsServer temp = active_list.get(i);
+						double numJobs = temp.waitJobs + temp.runJobs;
+						if (numJobs < minJobs){
+							minJobs = numJobs;
+							scheduleServer = temp;
+						}
+					}
+					
+				}
+				
+				//System.out.println (scheduleServer.type);
 				String schedule = "SCHD" + " " + scheduleJob.id + " " + scheduleServer.type + " " + scheduleServer.id;
 				
 				//send schedule job
