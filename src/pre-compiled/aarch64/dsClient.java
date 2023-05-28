@@ -35,7 +35,6 @@ public class dsClient {
 	
 	public static dsServer iterateList (ArrayList<dsServer> list, dsJob job){
 		dsServer server = null;
-		System.out.println(list.get(0).status);
 		for (int i = 0; i < list.size(); i++){
 			if (list.get(i).cores >= job.cores && list.get(i).memory >= job.memory && list.get(i).disk >= job.disk){
 				if (server == null){
