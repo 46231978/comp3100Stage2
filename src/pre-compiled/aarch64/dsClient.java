@@ -147,7 +147,6 @@ public class dsClient {
 				//send schedule job
 				write(schedule);
 				
-				//count++;
 			} 
 			//receive next job
 			str = receive();
