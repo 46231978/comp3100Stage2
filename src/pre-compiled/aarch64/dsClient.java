@@ -94,7 +94,6 @@ public class dsClient {
 				//write ok
 				write("OK");
 				
-				ArrayList<dsServer> idle_list = new ArrayList<>();
 				ArrayList<dsServer> active_list = new ArrayList<>();
 				ArrayList<dsServer> inactive_list = new ArrayList<>();
 				
@@ -105,9 +104,7 @@ public class dsClient {
 					str = din.readLine();
 					String[] sysInfo = str.split("\\s+");
 					dsServer curServer = new dsServer(sysInfo);
-					if (curServer.status.equals("idle")){
-						idle_list.add(curServer);
-					} else if (curServer.status.equals("active") || curServer.status.equals("booting")){
+					if (!curServer.status.equals("inactive")){
 						active_list.add(curServer);
 					} else {
 						inactive_list.add(curServer);
@@ -123,9 +120,7 @@ public class dsClient {
 				
 				dsServer scheduleServer = null;
 				
-				if (!idle_list.isEmpty()){
-					scheduleServer = iterateList(idle_list, scheduleJob);
-				}
+				
 				if (scheduleServer == null && !active_list.isEmpty()){
 					scheduleServer = iterateList(active_list, scheduleJob);
 				}
