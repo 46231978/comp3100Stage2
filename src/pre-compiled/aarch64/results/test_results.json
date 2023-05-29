@@ -10,9 +10,9 @@
     "config16-short-high.xml": 1228,
     "config16-short-med.xml": 705,
     "config40-long-high.xml": 3289,
-    "config40-long-med.xml": 3553,
+    "config40-long-med.xml": 3024,
     "config40-med-high.xml": 898,
-    "config40-med-med.xml": 941,
+    "config40-med-med.xml": 963,
     "config40-short-high.xml": 252,
     "config40-short-med.xml": 180
   },
@@ -27,9 +27,9 @@
     "config16-short-high.xml": 76.88,
     "config16-short-med.xml": 71.81,
     "config40-long-high.xml": 88.58,
-    "config40-long-med.xml": 74.52,
+    "config40-long-med.xml": 81.02,
     "config40-med-high.xml": 86.24,
-    "config40-med-med.xml": 74.86,
+    "config40-med-med.xml": 65.43,
     "config40-short-high.xml": 89.05,
     "config40-short-med.xml": 78.79
   },
@@ -44,9 +44,9 @@
     "config16-short-high.xml": 579.6,
     "config16-short-med.xml": 551.23,
     "config40-long-high.xml": 1199.9,
-    "config40-long-med.xml": 1004.46,
+    "config40-long-med.xml": 1490.0,
     "config40-med-high.xml": 587.47,
-    "config40-med-med.xml": 471.24,
+    "config40-med-med.xml": 1206.75,
     "config40-short-high.xml": 575.83,
     "config40-short-med.xml": 577.1
   }
